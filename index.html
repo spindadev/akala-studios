@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akala Studios por spindadev — Juegos de Roblox & CCU en Vivo</title>
+  <meta name="description" content="Portafolio oficial de Akala Studios creado por spindadev. Consulta los jugadores activos (CCU) en tiempo real y visitas de tus juegos en Roblox." />
+  <meta name="keywords" content="Akala Studios, spindadev, Roblox, juegos de Roblox, CCU en vivo, Climb Cocardo's Tower, Escala la torre de Mini Mini.exe" />
+  <meta name="author" content="spindadev" />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:title" content="Akala Studios por spindadev — Juegos de Roblox" />
+  <meta property="og:description" content="Estadísticas en vivo y juegos publicados de Akala Studios en Roblox." />
+  <meta property="og:type" content="website" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            void: '#07050c',
+            panel: '#120d1d',
+            edgerunnerPink: '#ff2a85',
+            edgerunnerCyan: '#00f0ff',
+            edgerunnerYellow: '#fce300',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Fondo Cyberpunk morado / neón rosa y cian con líneas de escaneo sutiles */
+    body {
+      background-color: #07050c;
+      color: #f4f4f9;
+      background-image:
+        radial-gradient(circle at 12% 14%, rgba(255, 42, 133, 0.22), transparent 38%),
+        radial-gradient(circle at 88% 18%, rgba(0, 240, 255, 0.16), transparent 36%),
+        radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.16), transparent 45%),
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.018) 0px,
+          rgba(255, 255, 255, 0.018) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      background-attachment: fixed;
+    }
+
+    .cyber-card {
+      background: linear-gradient(155deg, rgba(20, 14, 34, 0.84), rgba(10, 12, 22, 0.90));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 240, 255, 0.22);
+      box-shadow: 0 0 0 1px rgba(255, 42, 133, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .cyber-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 42, 133, 0.65);
+      box-shadow: 0 14px 36px -10px rgba(255, 42, 133, 0.30), 0 0 22px -6px rgba(0, 240, 255, 0.22);
+    }
+
+    .live-dot {
+      box-shadow: 0 0 10px #00f0ff, 0 0 20px #ff2a85;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#ff2a85]/30 selection:text-[#00f0ff]">
+
+  <!-- Barra de progreso de auto-actualización (60s) -->
+  <div class="fixed top-0 left-0 w-full h-1 bg-slate-950 z-50">
+    <div id="refresh-bar" class="h-full bg-gradient-to-r from-[#ff2a85] via-[#fce300] to-[#00f0ff] transition-all duration-1000 ease-linear" style="width: 100%;"></div>
+  </div>
+
+  <!-- Encabezado / Hero -->
+  <header class="relative pt-14 pb-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff2a85]/15 border border-[#ff2a85]/40 text-[#ff79b4] text-xs font-mono mb-4">
+          <span class="w-2 h-2 rounded-full bg-[#00f0ff] animate-pulse"></span>
+          ESTUDIO INDIE DE ROBLOX // NIGHT CITY EDITION
+        </div>
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white">
+          AKALA <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2a85] via-[#fce300] to-[#00f0ff]">STUDIOS</span>
+        </h1>
+        <p class="mt-2 text-slate-300 text-base sm:text-lg flex items-center gap-2">
+          Creado por <span class="font-mono font-bold text-[#00f0ff] bg-[#00f0ff]/10 px-2.5 py-0.5 rounded border border-[#00f0ff]/30">@spindadev</span>
+        </p>
+      </div>
+
+      <!-- Estado de sincronización y botón de refresco -->
+      <div class="flex flex-col sm:items-end gap-2">
+        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-panel/90 border border-[#00f0ff]/25 text-xs font-mono text-slate-200">
+          <span id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-[#00f0ff] live-dot animate-pulse"></span>
+          <span id="status-text">Sincronizando con Roblox...</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs text-slate-400 font-mono">
+          <span>Actualiza en <strong id="countdown-text" class="text-[#fce300]">60s</strong></span>
+          <button onclick="fetchGamesData()" class="px-2.5 py-1 rounded bg-white/5 hover:bg-[#ff2a85]/20 text-slate-200 border border-white/15 hover:border-[#ff2a85]/50 transition cursor-pointer">
+            ↻ Actualizar ahora
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner Global de Estadísticas en Vivo -->
+    <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- CCU Total -->
+      <div class="cyber-card rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono uppercase tracking-wider text-[#00f0ff] font-semibold">Jugadores Activos (CCU)</span>
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-mono bg-[#ff2a85]/20 text-[#ff79b4] border border-[#ff2a85]/40">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#00f0ff] animate-ping"></span> EN VIVO
+          </span>
+        </div>
+        <div id="total-ccu" class="mt-3 font-display text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+          --
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Suma total entre tus juegos</p>
+      </div>
+
+      <!-- Visitas Totales -->
+      <div class="cyber-card rounded-2xl p-6">
+        <span class="text-xs font-mono uppercase tracking-wider text-[#ff2a85] font-semibold">Visitas Acumuladas</span>
+        <div id="total-visits" class="mt-3 font-display text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+          --
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Sesiones jugadas en Akala Studios</p>
+      </div>
+
+      <!-- Juegos Publicados -->
+      <div class="cyber-card rounded-2xl p-6">
+        <span class="text-xs font-mono uppercase tracking-wider text-[#fce300] font-semibold">Juegos Publicados</span>
+        <div id="total-games" class="mt-3 font-display text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+          2
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Experiencias activas en Roblox</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="flex-1 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full pb-20">
+
+    <!-- Sección: Juegos -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white">Juegos</h2>
+          <p class="text-sm text-slate-400 mt-1">Estadísticas en tiempo real conectadas a Roblox</p>
+        </div>
+      </div>
+
+      <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Skeleton Loader inicial -->
+        <div class="cyber-card rounded-2xl p-6 animate-pulse space-y-4">
+          <div class="w-full h-48 bg-slate-800/80 rounded-xl"></div>
+          <div class="h-6 bg-slate-800 rounded w-2/3"></div>
+          <div class="h-4 bg-slate-800 rounded w-full"></div>
+          <div class="h-4 bg-slate-800 rounded w-4/5"></div>
+        </div>
+        <div class="cyber-card rounded-2xl p-6 animate-pulse space-y-4">
+          <div class="w-full h-48 bg-slate-800/80 rounded-xl"></div>
+          <div class="h-6 bg-slate-800 rounded w-2/3"></div>
+          <div class="h-4 bg-slate-800 rounded w-full"></div>
+          <div class="h-4 bg-slate-800 rounded w-4/5"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pie de página -->
+  <footer class="border-t border-white/10 py-8 px-4 text-center text-xs text-slate-400 font-mono">
+    <p>© <span id="year"></span> <strong class="text-white">Akala Studios</strong> — Creado por <strong class="text-[#00f0ff]">spindadev</strong>.</p>
+    <p class="mt-1 text-slate-500">No afiliado oficialmente con Roblox Corporation. Datos obtenidos mediante API pública.</p>
+  </footer>
+
+  <!-- Toast de notificación al copiar enlace -->
+  <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 rounded-xl bg-[#ff2a85] text-white text-sm font-bold shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+    ¡Enlace del juego copiado al portapapeles!
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Universe IDs de los juegos de Akala Studios
+    const UNIVERSE_IDS = [10772370001, 10776789278];
+
+    // Diccionario en español para garantizar títulos y descripciones siempre en español
+    const JUEGOS_ESPANOL = {
+      10772370001: {
+        name: "Climb Cocardo's Tower",
+        description: "Escala hasta lo más alto de la torre de Cocardo superando obstáculos, saltos de precisión y trampas en cada nivel. ¡Demuestra tu habilidad y llega a la cima!",
+        placeIdFallback: 10772370001
+      },
+      10776789278: {
+        name: "Escala la torre de Mini Mini.exe",
+        description: "Atrévete a subir la caótica torre de Mini Mini.exe. Esquiva peligros inesperados, avanza piso por piso y sobrevive hasta completar el desafío final.",
+        placeIdFallback: 10776789278
+      }
+    };
+
+    let countdown = 60;
+    let expandedDescriptions = {};
+
+    function formatNumber(num) {
+      if (num === null || num === undefined) return '0';
+      return new Intl.NumberFormat('es-MX').format(num);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    function copyGameLink(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('¡Enlace copiado al portapapeles!');
+      });
+    }
+
+    function toggleDescription(id) {
+      expandedDescriptions[id] = !expandedDescriptions[id];
+      const descEl = document.getElementById(`desc-${id}`);
+      const btnEl = document.getElementById(`btn-desc-${id}`);
+      if (expandedDescriptions[id]) {
+        descEl.classList.remove('line-clamp-3');
+        btnEl.textContent = 'Ver menos';
+      } else {
+        descEl.classList.add('line-clamp-3');
+        btnEl.textContent = 'Ver más';
+      }
+    }
+
+    async function fetchGamesData() {
+      const statusText = document.getElementById('status-text');
+      const statusIndicator = document.getElementById('status-indicator');
+      statusText.textContent = 'Actualizando datos en vivo...';
+
+      const idsParam = UNIVERSE_IDS.join(',');
+      const gamesUrl = `https://games.roproxy.com/v1/games?universeIds=${idsParam}`;
+      const thumbsUrl = `https://thumbnails.roproxy.com/v1/games/icons?universeIds=${idsParam}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false`;
+
+      try {
+        const [gamesRes, thumbsRes] = await Promise.all([
+          fetch(gamesUrl),
+          fetch(thumbsUrl)
+        ]);
+
+        if (!gamesRes.ok) throw new Error('Error al consultar RoProxy Games API');
+
+        const gamesJson = await gamesRes.json();
+        const thumbsJson = thumbsRes.ok ? await thumbsRes.json() : { data: [] };
+
+        const thumbMap = {};
+        if (thumbsJson && Array.isArray(thumbsJson.data)) {
+          thumbsJson.data.forEach(item => {
+            if (item.imageUrl) {
+              thumbMap[item.targetId] = item.imageUrl;
+            }
+          });
+        }
+
+        const gamesList = gamesJson.data || [];
+        if (gamesList.length === 0) throw new Error('Sin datos devueltos');
+
+        renderGames(gamesList, thumbMap, true);
+        statusText.textContent = 'Conectado en vivo (RoProxy)';
+        statusIndicator.className = 'w-2.5 h-2.5 rounded-full bg-[#00f0ff] live-dot animate-pulse';
+      } catch (error) {
+        console.warn('Usando modo respaldo:', error);
+        const fallbackGames = UNIVERSE_IDS.map(id => ({
+          id: id,
+          rootPlaceId: JUEGOS_ESPANOL[id]?.placeIdFallback || id,
+          name: JUEGOS_ESPANOL[id]?.name || `Experiencia #${id}`,
+          description: JUEGOS_ESPANOL[id]?.description || 'Experiencia oficial de Akala Studios en Roblox.',
+          playing: 0,
+          visits: 0
+        }));
+        renderGames(fallbackGames, {}, false);
+        statusText.textContent = 'Modo local / respaldo (se activa en la web)';
+        statusIndicator.className = 'w-2.5 h-2.5 rounded-full bg-[#fce300]';
+      }
+
+      countdown = 60;
+    }
+
+    function renderGames(games, thumbMap, isLive) {
+      const grid = document.getElementById('games-grid');
+      let totalCCU = 0;
+      let totalVisits = 0;
+
+      games.sort((a, b) => UNIVERSE_IDS.indexOf(a.id) - UNIVERSE_IDS.indexOf(b.id));
+
+      grid.innerHTML = games.map(game => {
+        const ccu = game.playing || 0;
+        const visits = game.visits || 0;
+        totalCCU += ccu;
+        totalVisits += visits;
+
+        const customEs = JUEGOS_ESPANOL[game.id] || {};
+        const title = customEs.name || game.name;
+        const description = customEs.description || game.description || 'Explora esta experiencia creada por spindadev en Akala Studios.';
+        const placeId = game.rootPlaceId || customEs.placeIdFallback || game.id;
+        const robloxLink = `https://www.roblox.com/games/${placeId}`;
+        const iconUrl = thumbMap[game.id];
+
+        return `
+          <article class="cyber-card rounded-2xl overflow-hidden flex flex-col justify-between">
+            <div>
+              <div class="relative h-52 w-full bg-gradient-to-br from-[#160b29] via-[#1c0f38] to-[#081b29] overflow-hidden flex items-center justify-center border-b border-[#00f0ff]/20">
+                ${iconUrl
+                  ? `<img src="${iconUrl}" alt="${title}" class="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105" />`
+                  : `<div class="text-center p-6">
+                       <span class="text-5xl">🎮</span>
+                       <p class="mt-2 font-mono text-xs text-[#00f0ff]">Akala Studios</p>
+                     </div>`
+                }
+                <div class="absolute inset-0 bg-gradient-to-t from-[#100c1d] via-transparent to-transparent"></div>
+
+                <div class="absolute top-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/90 backdrop-blur-md border border-[#00f0ff]/45 text-xs font-mono text-[#00f0ff] shadow-lg">
+                  <span class="w-2 h-2 rounded-full bg-[#ff2a85] animate-ping"></span>
+                  <span><strong>${formatNumber(ccu)}</strong> jugando</span>
+                </div>
+              </div>
+
+              <div class="p-6">
+                <div class="flex items-start justify-between gap-2">
+                  <h3 class="font-display text-2xl font-bold text-white leading-snug">${title}</h3>
+                </div>
+
+                <div class="mt-3 flex flex-wrap items-center gap-4 text-xs font-mono text-slate-300">
+                  <span class="inline-flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/10">
+                    👁️ Visitas: <strong class="text-[#fce300]">${formatNumber(visits)}</strong>
+                  </span>
+                </div>
+
+                <p id="desc-${game.id}" class="mt-4 text-sm text-slate-300 leading-relaxed line-clamp-3">
+                  ${description}
+                </p>
+                ${description.length > 130 ? `
+                  <button id="btn-desc-${game.id}" onclick="toggleDescription(${game.id})" class="mt-1.5 text-xs font-mono text-[#00f0ff] hover:text-[#ff2a85] cursor-pointer">
+                    Ver más
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <div class="px-6 pb-6 pt-2 flex items-center gap-3">
+              <a href="${robloxLink}" target="_blank" rel="noopener noreferrer"
+                 class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#d91e6f] hover:brightness-110 text-white font-bold text-sm transition shadow-lg shadow-[#ff2a85]/25">
+                ▶ Jugar en Roblox
+              </a>
+              <button onclick="copyGameLink('${robloxLink}')" title="Copiar enlace del juego"
+                      class="px-4 py-3 rounded-xl bg-white/5 hover:bg-[#00f0ff]/15 text-[#00f0ff] border border-[#00f0ff]/30 text-sm font-mono transition cursor-pointer">
+                🔗
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      document.getElementById('total-ccu').textContent = formatNumber(totalCCU);
+      document.getElementById('total-visits').textContent = formatNumber(totalVisits);
+      document.getElementById('total-games').textContent = games.length;
+    }
+
+    setInterval(() => {
+      countdown--;
+      if (countdown <= 0) {
+        fetchGamesData();
+      } else {
+        document.getElementById('countdown-text').textContent = `${countdown}s`;
+        const pct = (countdown / 60) * 100;
+        document.getElementById('refresh-bar').style.width = `${pct}%`;
+      }
+    }, 1000);
+
+    fetchGamesData();
+  </script>
+</body>
+</html>
