@@ -13,6 +13,9 @@
   <meta property="og:description" content="Estadísticas en vivo y juegos publicados de Akala Studios en Roblox." />
   <meta property="og:type" content="website" />
 
+  <!-- Favicon dinámico/robusto desde el repo -->
+  <link id="site-favicon" rel="icon" type="image/jpeg" href="./icon.jpg" />
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -128,14 +131,13 @@
     <!-- Banner del Estudio -->
     <div class="relative mb-8 rounded-2xl overflow-hidden border border-[#f45ba0]/40 shadow-2xl shadow-[#0b0312]/80 bg-[#230d36] animate-card-enter">
       <img
-        src="./banner.jpg"
+        id="studio-banner"
         alt="Banner oficial de Akala Studios"
-        onerror="this.style.display='none'; document.getElementById('banner-fallback').classList.remove('hidden');"
         class="w-full h-44 sm:h-64 md:h-72 object-cover object-center block transition-transform duration-700 hover:scale-[1.02]"
       />
       <div id="banner-fallback" class="hidden w-full h-44 sm:h-64 md:h-72 bg-gradient-to-r from-[#1f0b30] via-[#34124d] to-[#14081e] flex items-center justify-center px-6 text-center">
         <p class="font-mono text-xs text-pink-200/80">
-          Coloca <strong class="text-[#ff78b6]">banner.jpg</strong> en la misma carpeta que <strong class="text-[#fce8a6]">index.html</strong> para mostrar el banner del estudio.
+          No se encontró el banner en el repositorio (<strong class="text-[#ff78b6]">banner</strong> con extensión .jpg, .jpeg o .png).
         </p>
       </div>
       <div class="absolute inset-0 bg-gradient-to-t from-[#14081e]/85 via-transparent to-transparent pointer-events-none"></div>
@@ -146,9 +148,8 @@
         <!-- Icono del Estudio -->
         <div class="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#f45ba0]/70 bg-[#230d36] flex items-center justify-center animate-float-slow animate-glow-pulse">
           <img
-            src="./icon.jpg"
+            id="studio-icon"
             alt="Icono oficial de Akala Studios"
-            onerror="this.style.display='none'; document.getElementById('icon-fallback').classList.remove('hidden');"
             class="w-full h-full object-cover object-center"
           />
           <span id="icon-fallback" class="hidden font-display text-2xl font-extrabold text-[#ff78b6]">A</span>
@@ -296,6 +297,82 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     const DISCORD_INVITE_URL = 'https://discord.gg/DnBmUwfrtW';
+
+    /**
+     * Detecta automáticamente la ruta base del repositorio en GitHub Pages
+     * (por ejemplo: "https://usuario.github.io/mi-repo/" o "./")
+     * y prueba las rutas/extensiones comunes (.jpg, .jpeg, .png, .webp)
+     * para cargar icon y banner desde el repositorio.
+     */
+    function getRepoBaseUrl() {
+      const { origin, pathname, protocol } = window.location;
+      if (protocol === 'file:') {
+        return './';
+      }
+      const cleanPath = pathname.endsWith('/')
+        ? pathname
+        : pathname.substring(0, pathname.lastIndexOf('/') + 1);
+      return `${origin}${cleanPath}`;
+    }
+
+    function buildAssetCandidates(baseName) {
+      const repoBase = getRepoBaseUrl();
+      const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'WEBP'];
+      const candidates = [];
+
+      exts.forEach(ext => {
+        candidates.push(`${repoBase}${baseName}.${ext}`);
+        candidates.push(`./${baseName}.${ext}`);
+      });
+
+      return candidates;
+    }
+
+    function loadImageWithFallback(imgEl, baseName, onSuccess, onAllFailed) {
+      const candidates = buildAssetCandidates(baseName);
+      let idx = 0;
+
+      function tryNext() {
+        if (idx >= candidates.length) {
+          imgEl.style.display = 'none';
+          if (onAllFailed) onAllFailed();
+          return;
+        }
+        const url = candidates[idx++];
+        const tester = new Image();
+        tester.onload = () => {
+          imgEl.src = url;
+          imgEl.style.display = 'block';
+          if (onSuccess) onSuccess(url);
+        };
+        tester.onerror = tryNext;
+        tester.src = url;
+      }
+
+      tryNext();
+    }
+
+    // Cargar icono y banner desde el repositorio
+    loadImageWithFallback(
+      document.getElementById('studio-icon'),
+      'icon',
+      (loadedUrl) => {
+        const fav = document.getElementById('site-favicon');
+        if (fav) fav.href = loadedUrl;
+      },
+      () => {
+        document.getElementById('icon-fallback').classList.remove('hidden');
+      }
+    );
+
+    loadImageWithFallback(
+      document.getElementById('studio-banner'),
+      'banner',
+      null,
+      () => {
+        document.getElementById('banner-fallback').classList.remove('hidden');
+      }
+    );
 
     // Universe IDs de los juegos de Akala Studios
     const UNIVERSE_IDS = [10772370001, 10776789278];
